@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deadlock Simulator | OS Mini Project</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ═══════════════════════════  TOAST  ══════════════════════════════════ -->
+<div id="toast-container"></div>
+
+<!-- ═══════════════════════════  NAVBAR  ═════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-brand">
+    <span class="brand-icon">⚙</span>
+    <span class="brand-text">DeadlockSim</span>
+    <span class="brand-badge">OS Project</span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home"      class="nav-link active">Home</a></li>
+    <li><a href="#detection" class="nav-link">Detection</a></li>
+    <li><a href="#prevention"class="nav-link">Prevention</a></li>
+    <li><a href="#about"     class="nav-link">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="themeToggle" title="Toggle Light/Dark Mode">🌙</button>
+    <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════  HERO  ═══════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Operating Systems · Mini Project</div>
+    <h1 class="hero-title">
+      Deadlock<br/>
+      <span class="gradient-text">Detection &amp; Prevention</span><br/>
+      Simulator
+    </h1>
+    <p class="hero-subtitle">
+      Visualise how deadlocks form, detect them with the Resource Allocation algorithm,
+      and prevent them using Banker's Algorithm — step by step.
+    </p>
+    <div class="hero-actions">
+      <a href="#detection"  class="btn btn-primary">Run Detection →</a>
+      <a href="#prevention" class="btn btn-outline">Banker's Algorithm</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">2</span><span class="stat-label">Algorithms</span></div>
+      <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Configurations</span></div>
+      <div class="stat"><span class="stat-num">Live</span><span class="stat-label">Visualisation</span></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="process-ring" id="processRing"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════  FEATURE CARDS  ══════════════════════════════ -->
+<section class="features" id="features">
+  <div class="container">
+    <h2 class="section-title">What You Can Simulate</h2>
+    <div class="cards-grid">
+      <div class="feature-card" onclick="scrollTo('detection')">
+        <div class="card-icon">🔍</div>
+        <h3>Deadlock Detection</h3>
+        <p>Enter Allocation, Request and Available matrices. The algorithm identifies deadlocked processes and shows a step-by-step execution trace.</p>
+        <div class="card-complexity">
+          <span class="badge badge-blue">O(n² · r) Time</span>
+          <span class="badge badge-purple">O(n + r) Space</span>
+        </div>
+      </div>
+      <div class="feature-card" onclick="scrollTo('prevention')">
+        <div class="card-icon">🛡</div>
+        <h3>Deadlock Prevention</h3>
+        <p>Run Banker's Algorithm on Allocation and Maximum matrices. The simulator computes Need automatically and finds a safe execution sequence.</p>
+        <div class="card-complexity">
+          <span class="badge badge-blue">O(n² · r) Time</span>
+          <span class="badge badge-purple">O(n · r) Space</span>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="card-icon">🎞</div>
+        <h3>Animated Visualisation</h3>
+        <p>Watch processes execute one by one with live resource counter updates, colour-coded status badges and smooth transitions.</p>
+        <div class="card-complexity">
+          <span class="badge badge-green">Real-time</span>
+          <span class="badge badge-orange">Interactive</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════  MODULE 1 — DETECTION  ═══════════════════════ -->
+<section class="simulator-section" id="detection">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">Module 1</div>
+        <h2 class="section-title">Deadlock Detection</h2>
+        <p class="section-desc">Provide the current state of the system. The algorithm checks whether any subset of processes is deadlocked.</p>
+      </div>
+      <div class="algo-info-btn" onclick="toggleAlgoPanel('detect-algo')">📖 Algorithm</div>
+    </div>
+
+    <!-- Algorithm explanation panel -->
+    <div class="algo-panel" id="detect-algo">
+      <h4>Detection Algorithm — Pseudocode</h4>
+      <pre class="pseudocode">Work  ← Available
+Finish[i] ← (Allocation[i] == 0) for each i
+
+repeat:
+  find i such that Finish[i] = false AND Request[i] ≤ Work
+  if found:
+    Work   ← Work + Allocation[i]
+    Finish[i] ← true
+until no such i found
+
+Deadlocked ← { i | Finish[i] = false }</pre>
+    </div>
+
+    <!-- Config row -->
+    <div class="config-row">
+      <div class="config-group">
+        <label>Processes (n)</label>
+        <input type="number" id="d-proc" value="5" min="1" max="10" class="num-input" />
+      </div>
+      <div class="config-group">
+        <label>Resources (r)</label>
+        <input type="number" id="d-res"  value="3" min="1" max="8"  class="num-input" />
+      </div>
+      <button class="btn btn-secondary" onclick="generateDetectMatrices()">Generate Matrices</button>
+      <button class="btn btn-outline"   onclick="loadSampleDetect()">Load Sample</button>
+    </div>
+
+    <!-- Matrices -->
+    <div id="detect-matrices" class="matrices-area" style="display:none">
+
+      <div class="matrix-block">
+        <div class="matrix-header">
+          <h4>Allocation Matrix <span class="tooltip-icon" title="Resources currently held by each process">ⓘ</span></h4>
+        </div>
+        <div id="d-alloc-table"></div>
+      </div>
+
+      <div class="matrix-block">
+        <div class="matrix-header">
+          <h4>Request Matrix <span class="tooltip-icon" title="Resources still needed / requested by each process">ⓘ</span></h4>
+        </div>
+        <div id="d-req-table"></div>
+      </div>
+
+      <div class="matrix-block full-width">
+        <div class="matrix-header">
+          <h4>Available Vector <span class="tooltip-icon" title="Resources available in the system right now">ⓘ</span></h4>
+        </div>
+        <div id="d-avail-table"></div>
+      </div>
+
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-bar" id="detect-action-bar" style="display:none">
+      <button class="btn btn-primary" onclick="runDetect()">🔍 Detect Deadlock</button>
+      <button class="btn btn-danger"  onclick="resetDetect()">↺ Reset</button>
+      <button class="btn btn-ghost"   onclick="exportPDF('detect')">⬇ Export PDF</button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loader" id="detect-loader" style="display:none">
+      <div class="spinner"></div>
+      <p>Running detection algorithm…</p>
+    </div>
+
+    <!-- Results -->
+    <div id="detect-result"></div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════  MODULE 2 — BANKER'S  ════════════════════════ -->
+<section class="simulator-section alt-bg" id="prevention">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">Module 2</div>
+        <h2 class="section-title">Deadlock Prevention — Banker's Algorithm</h2>
+        <p class="section-desc">Enter Maximum and Allocation matrices. The system computes Need automatically and determines if the state is safe.</p>
+      </div>
+      <div class="algo-info-btn" onclick="toggleAlgoPanel('banker-algo')">📖 Algorithm</div>
+    </div>
+
+    <div class="algo-panel" id="banker-algo">
+      <h4>Banker's Algorithm — Pseudocode</h4>
+      <pre class="pseudocode">Need[i]  ← Maximum[i] − Allocation[i]
+Work     ← Available
+Finish[i]← false for each i
+
+repeat:
+  find i such that Finish[i] = false AND Need[i] ≤ Work
+  if found:
+    Work    ← Work + Allocation[i]
+    Finish[i] ← true
+until no such i found
+
+Safe ← all Finish[i] = true</pre>
+    </div>
+
+    <div class="config-row">
+      <div class="config-group">
+        <label>Processes (n)</label>
+        <input type="number" id="b-proc" value="5" min="1" max="10" class="num-input" />
+      </div>
+      <div class="config-group">
+        <label>Resources (r)</label>
+        <input type="number" id="b-res"  value="3" min="1" max="8"  class="num-input" />
+      </div>
+      <button class="btn btn-secondary" onclick="generateBankerMatrices()">Generate Matrices</button>
+      <button class="btn btn-outline"   onclick="loadSampleBanker()">Load Sample</button>
+    </div>
+
+    <div id="banker-matrices" class="matrices-area" style="display:none">
+
+      <div class="matrix-block">
+        <div class="matrix-header">
+          <h4>Allocation Matrix <span class="tooltip-icon" title="Resources currently held by each process">ⓘ</span></h4>
+        </div>
+        <div id="b-alloc-table"></div>
+      </div>
+
+      <div class="matrix-block">
+        <div class="matrix-header">
+          <h4>Maximum Matrix <span class="tooltip-icon" title="Maximum resources each process may ever need">ⓘ</span></h4>
+        </div>
+        <div id="b-max-table"></div>
+      </div>
+
+      <div class="matrix-block full-width">
+        <div class="matrix-header">
+          <h4>Available Vector <span class="tooltip-icon" title="Resources currently available in the system">ⓘ</span></h4>
+        </div>
+        <div id="b-avail-table"></div>
+      </div>
+
+    </div>
+
+    <div class="action-bar" id="banker-action-bar" style="display:none">
+      <button class="btn btn-primary" onclick="runBanker()">🛡 Run Banker's Algorithm</button>
+      <button class="btn btn-danger"  onclick="resetBanker()">↺ Reset</button>
+      <button class="btn btn-ghost"   onclick="exportPDF('banker')">⬇ Export PDF</button>
+    </div>
+
+    <div class="loader" id="banker-loader" style="display:none">
+      <div class="spinner"></div>
+      <p>Running Banker's Algorithm…</p>
+    </div>
+
+    <div id="banker-result"></div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════  HISTORY PANEL  ══════════════════════════════ -->
+<section class="history-section" id="history-section" style="display:none">
+  <div class="container">
+    <div class="history-header" onclick="toggleHistory()">
+      <h3>📋 Simulation History <span id="history-count" class="badge badge-blue">0</span></h3>
+      <span id="history-toggle-icon">▲</span>
+    </div>
+    <div id="history-body">
+      <div id="history-list"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════  ABOUT  ═══════════════════════════════════ -->
+<section class="about-section" id="about">
+  <div class="container">
+    <h2 class="section-title">About This Project</h2>
+    <div class="about-grid">
+      <div class="about-card">
+        <h4>📚 Academic Context</h4>
+        <p>Created as an Operating Systems mini project to demonstrate deadlock concepts including detection and avoidance using classical algorithms taught in OS courses.</p>
+      </div>
+      <div class="about-card">
+        <h4>🛠 Tech Stack</h4>
+        <p><strong>Backend:</strong> Python · Flask<br/>
+           <strong>Frontend:</strong> HTML5 · CSS3 · Vanilla JS<br/>
+           <strong>Algorithms:</strong> Resource Allocation Graph · Banker's Algorithm</p>
+      </div>
+      <div class="about-card">
+        <h4>📐 Complexity</h4>
+        <p><strong>Detection:</strong> O(n² · r) time, O(n + r) space<br/>
+           <strong>Banker's:</strong> O(n² · r) time, O(n · r) space<br/>
+           where n = processes, r = resource types</p>
+      </div>
+      <div class="about-card">
+        <h4>🎓 References</h4>
+        <p>Silberschatz, Galvin & Gagne — <em>Operating System Concepts</em> (10th Ed.)<br/>
+           Tanenbaum — <em>Modern Operating Systems</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════  FOOTER  ════════════════════════════════════ -->
+<footer class="footer">
+  <p>Deadlock Detection &amp; Prevention Simulator · OS Mini Project</p>
+  <p class="footer-sub">Built By Shreyansh Tiwari, Rajkaran Singh, Chirag Kamariya, Veshwik jain</p>
+</footer>
+
+<script src="/static/js/script.js"></script>
+</body>
+</html>
